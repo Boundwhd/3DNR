@@ -15,7 +15,7 @@ int main() {
 	u16* bayer_dat;
 	bayer_dat = (u16 *)malloc(sizeof(u16) * image_height *image_width);
 	memset(bayer_dat,0,sizeof(u16) * image_height * image_width);
-
+	FILE* f1 = fopen("test.txt","w");
 	FILE* f = fopen("work/IMG_7_2_after_denoise.raw","rb");
 	if(!f){
 		printf("open unsuccessfully!\n");
@@ -28,25 +28,38 @@ int main() {
 		for(int col = 0;row < image_width - 15;col += 16){
 			for(int i = 0;i < 16;i++){
 				for(int j = 0;j < 16;j++){
-					noise_block[i][j] = bayer_dat[(i + row) * image_height + (j+col)];
-					min_noise_4channel = min_noise(noise_block);
-					if(GR_min < min_noise_4channel[0]){
-						GR_min = min_noise_4channel[0];
-					}
-					if(GB_min < min_noise_4channel[1]){
-						GB_min = min_noise_4channel[1];
-					}
-					if(R_min < min_noise_4channel[2]){
-						R_min = min_noise_4channel[2];
-					}
-					if(B_min < min_noise_4channel[3]){
-						B_min = min_noise_4channel[3];
-					}
+					noise_block[i][j] = bayer_dat[(row + i) * image_width +(j + col)];
 				}
+			}	
+			min_noise_4channel = min_noise(noise_block);
+			if(GR_min < min_noise_4channel[0]){
+				GR_min = min_noise_4channel[0];
+			}
+			if(GB_min < min_noise_4channel[1]){
+				GB_min = min_noise_4channel[1];
+			}
+			if(R_min < min_noise_4channel[2]){
+				R_min = min_noise_4channel[2];
+			}
+			if(B_min < min_noise_4channel[3]){
+				B_min = min_noise_4channel[3];
 			}
 		}
 	}
-	printf("a = %d\n,b = %d\nc = %d\nd = %d\n",GR_min,GB_min,R_min,B_min);
+	// for(int i = 0;i < 16;i++){
+	// 	for(int j = 0;j < 16;j++){
+	// 			noise_block[i][j] = bayer_dat[i * image_height + j];
+	// 	}
+	// }
+	// for(int i = 0;i < 16;i++){
+    //     			for(int j = 0;j < 16;j++){
+    //         			fprintf(f1,"block[%d][%d]=%d\t",i,j,noise_block[i][j]);
+    //         			if(j == 15){
+    //         				fprintf(f1,"\n");
+    //        				}
+    //     			}   
+    // 			}
+	// min_noise_4channel = min_noise(noise_block);
 	
 	return 0;
 }
